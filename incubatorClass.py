@@ -17,9 +17,7 @@ import time
 from sht30_library import SHT3X
 from d1motor import Motor
 from rotary_irq_esp import RotaryIRQ
-
-
-
+import sys
 
 
 class Incubator:
@@ -34,20 +32,32 @@ class Incubator:
     OFF = False
     
     # Rotary values
-    MIN_ROTARY_VALUE = 180
-    MAX_ROTARY_VALUE = 10000
+    MIN_ROTARY_VALUE = 1
+    MAX_ROTARY_VALUE = 100
+    # clk_pin = 26
+    # dt_pin = 17
+    
+    # Motor driver pins
+    SCL = 22
+    SDA = 21
     
     
-#     clk_pin = 26
-# dt_pin = 21
     
     # Initiating the class
     def __init__(self, light_up_pin, light_down_pin, rotary_clk_pin=None, rotary_dt_pin=None):
         self.light_up = Pin(light_up_pin, Pin.OUT)
         self.light_down = Pin(light_down_pin, Pin.OUT)
-        self.rotary = RotaryIRQ(pin_num_clk=26, pin_num_dt=21, min_val=self.MIN_ROTARY_VALUE, max_val=self.MAX_ROTARY_VALUE, reverse=False, range_mode=RotaryIRQ.RANGE_WRAP)
+        self.i2c = I2C(1, scl = Pin(self.SCL), sda = Pin(self.SDA))
+        self.upMotor = Motor(0, self.i2c)
+        self.downMotor = Motor(1, self.i2c)
+        self.rotary = RotaryIRQ(pin_num_clk=rotary_clk_pin, pin_num_dt=rotary_dt_pin, min_val=self.MIN_ROTARY_VALUE, max_val=self.MAX_ROTARY_VALUE, reverse=False, range_mode=RotaryIRQ.RANGE_WRAP)
+       
         
+    # Get all i2c devices connected
+    def i2cDevices(self):
+        print(self.i2c.scan())
         
+    
     # Get state of light switches
     def bulbState(self, bulbSelect):
         if bulbSelect == self.UP_BULB:
@@ -85,6 +95,7 @@ class Incubator:
             print("Wrong input")
             return -1
             
+    
     # Function to control to servo motor, this is to control the tiny vent
     
     
@@ -94,11 +105,33 @@ class Incubator:
         temp, humid = sensor.getTempAndHumi()
         return temp, humid
     
+    
     # Function to display temperature and humidity
     def getTempAndHumid(self):
         temp, humid = self._readTempAndHumid()
         print("Temporature:", temp, 'ºC, RH:', humid, '%')
+        
     
+    # Control motor speed
+    def controlMotorSpeed(self):
+        val_old = self.rotary.value()
+        scalar = 100
+
+        try:
+            while 1:
+                if self.rotary.value() != val_old:
+                    val_old = self.rotary.value()
+                    print("speed", val_old * scalar)
+                    self.upMotor.speed(int(val_old * scalar))
+                    self.downMotor.speed(int(val_old * scalar))
+                time.sleep_ms(50)
+                
+        except (KeyboardInterrupt, OSError):
+            self.upMotor.brake()
+            self.downMotor.brake()
+            print('Ended')
+            sys.exit()
+       
     
     
     
@@ -106,9 +139,11 @@ class Incubator:
 # Testing
 
 
-incubator = Incubator(19, 22)
+incubator = Incubator(19, 18, 26, 27)
 # print(incubator.bulbState(incubator.UP_BULB))
 # incubator.switchLight(incubator.UP_BULB, incubator.ON)
-incubator.getTempAndHumid()
+# incubator.getTempAndHumid()
 # print(incubator._readTempAndHumid())
+# incubator.i2cDevices()
+incubator.controlMotorSpeed()
 
