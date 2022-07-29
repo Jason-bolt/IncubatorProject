@@ -15,7 +15,7 @@ Date: 18th July, 2022
 from machine import Pin, PWM, I2C
 import time
 from sht30_library import SHT3X
-from d1motor import Motor
+from motor import Motor
 from rotary_irq_esp import RotaryIRQ
 import sys
 
@@ -33,7 +33,7 @@ class Incubator:
     
     # Rotary values
     MIN_ROTARY_VALUE = 1
-    MAX_ROTARY_VALUE = 100
+    MAX_ROTARY_VALUE = 20
     # clk_pin = 26
     # dt_pin = 17
     
@@ -47,9 +47,10 @@ class Incubator:
     def __init__(self, light_up_pin, light_down_pin, rotary_clk_pin=None, rotary_dt_pin=None):
         self.light_up = Pin(light_up_pin, Pin.OUT)
         self.light_down = Pin(light_down_pin, Pin.OUT)
-        self.i2c = I2C(1, scl = Pin(self.SCL), sda = Pin(self.SDA))
+        self.i2c = I2C(1, sda = Pin(self.SDA), scl = Pin(self.SCL))
         self.upMotor = Motor(0, self.i2c)
         self.downMotor = Motor(1, self.i2c)
+#         self.downMotor.speed(1500)
         self.rotary = RotaryIRQ(pin_num_clk=rotary_clk_pin, pin_num_dt=rotary_dt_pin, min_val=self.MIN_ROTARY_VALUE, max_val=self.MAX_ROTARY_VALUE, reverse=False, range_mode=RotaryIRQ.RANGE_WRAP)
        
         
@@ -115,13 +116,13 @@ class Incubator:
     # Control motor speed
     def controlMotorSpeed(self):
         val_old = self.rotary.value()
-        scalar = 100
+        scalar = 500
 
         try:
             while 1:
                 if self.rotary.value() != val_old:
                     val_old = self.rotary.value()
-                    print("speed", val_old * scalar)
+                    print("speed", int(val_old * scalar))
                     self.upMotor.speed(int(val_old * scalar))
                     self.downMotor.speed(int(val_old * scalar))
                 time.sleep_ms(50)
@@ -139,7 +140,7 @@ class Incubator:
 # Testing
 
 
-incubator = Incubator(19, 18, 26, 27)
+incubator = Incubator(light_up_pin=19, light_down_pin=18, rotary_clk_pin=25, rotary_dt_pin=27)
 # print(incubator.bulbState(incubator.UP_BULB))
 # incubator.switchLight(incubator.UP_BULB, incubator.ON)
 # incubator.getTempAndHumid()
