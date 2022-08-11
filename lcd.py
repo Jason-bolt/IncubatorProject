@@ -23,7 +23,7 @@ mylcd = RPi_I2C_driver.lcd()
 mylcd.lcd_display_string("T-Hum:" + str(top_humidity) + "%", 1)
 mylcd.lcd_display_string("T-Temp:" + str(top_temperature) + "C", 2)
 
-sleep(5) # Wait for 5 seconds
+sleep(7) # Wait for 5 seconds
 
 mylcd.lcd_clear() # Clear screen
 sleep(1) # Wait for1 second
@@ -33,7 +33,7 @@ sleep(1) # Wait for1 second
 mylcd.lcd_display_string("B-Hum:" + str(bottom_humidity) + "%", 1)
 mylcd.lcd_display_string("B-Temp:" + str(bottom_temperature) + "C", 2)
 
-sleep(5) # Wait for 5 seconds
+sleep(7) # Wait for 5 seconds
 
 mylcd.lcd_clear() # Clear screen
 sleep(1) # Wait for1 second
