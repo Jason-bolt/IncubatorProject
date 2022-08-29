@@ -9,6 +9,8 @@ import Adafruit_DHT
 # Rotary libraries
 from RPi import GPIO
 
+# Initializing the lcd
+mylcd = RPi_I2C_driver.lcd()
 
 # DTH pins
 top_pin = 17
@@ -38,23 +40,16 @@ counter = 0
 previousValue = True
 
 
-# Reading rotary data
-clkState = GPIO.input(clk)
-dtState = GPIO.input(dt)
-
-
-# Initializing the lcd
-mylcd = RPi_I2C_driver.lcd()
-
-
 
 
 # Main loop of the code
 while True:
-
-	while True:	
+	print ("Begin")
+	count = 0
+	while True:
 		# Rotary section
 		if previousValue != GPIO.input(clk):
+			count = 0
 			if GPIO.input(clk) == False:
 				if GPIO.input(dt) == False:
 					counter += 1
@@ -64,19 +59,19 @@ while True:
 					if counter < 0:
 						counter = 0
 					print (counter)
-		previousValue = GPIO.input(clk)
+
 		# stopping the loop
-		count = 0
-		if ((GPIO.input(clk), GPIO.input(dt)) == (1, 1)):
-			for _ in range(5000):
-				if clkState == 0:
-					break
-				else:
-					count += 1
-					sleep(0.1)
-					continue
-		if count == 5000:
-			break
+
+		else:
+			count += 1
+			print(count)
+			sleep(0.5)
+			if count == 50000:
+				break
+
+		previousValue = GPIO.input(clk)
+
+
 
 
 
@@ -87,11 +82,8 @@ while True:
 	mylcd.lcd_display_string("T-Hum:" + str(top_humidity) + "%", 1)
 	mylcd.lcd_display_string("T-Temp:" + str(top_temperature) + "C", 2)
 
-	for _ in range(7000):
-		sleep (0.1) # Wait for 7 seconds
-		if GPIO.input(clk):
-			break
-	#sleep(7) # Wait for 5 seconds
+
+	sleep(7) # Wait for 5 seconds
 
 	mylcd.lcd_clear() # Clear screen
 	sleep(1) # Wait for1 second
