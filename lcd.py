@@ -50,6 +50,7 @@ while True:
 		# Rotary section
 		if previousValue != GPIO.input(clk):
 			count = 0
+			print ("Resetting count")
 			if GPIO.input(clk) == False:
 				if GPIO.input(dt) == False:
 					counter += 1
@@ -62,12 +63,9 @@ while True:
 
 		# stopping the loop
 
-		else:
-			count += 1
-			print(count)
-			sleep(0.5)
-			if count == 50000:
-				break
+		count += 1
+		if count == 500000:
+			break
 
 		previousValue = GPIO.input(clk)
 
