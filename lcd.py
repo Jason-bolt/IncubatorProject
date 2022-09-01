@@ -34,8 +34,7 @@ top_fan = 18
 GPIO.setup(top_fan, GPIO.OUT)
 
 
-
-
+GPIO.cleanup()
 
 
 
