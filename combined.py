@@ -40,6 +40,24 @@ GPIO.output(top_light, OFF)
 GPIO.output(top_fan, OFF)
 
 
+
+# Read sensor values
+def readData():
+	# Getting the temperature and humidity for both DHTs
+	top_humidity, top_temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, top_pin)
+	bottom_humidity, bottom_temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, bottom_pin)
+	outside_humidity, outside_temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, outside_pin)
+	data = {
+		"top_humidity" : top_humidity,
+		"top_temperature" : top_temperature,
+		"bottom_humidity" : bottom_humidity,
+		"bottom_temperature" : bottom_temperature,
+		"outside_humidity" : outside_humidity,
+		"outside_temperature" : outside_temperature
+		}
+	return data
+
+
 # Function to check temperature and humidity limits of the sensor
 def checkLimit(temp, humid, position):
 	if position == "top":
@@ -83,43 +101,42 @@ try:
 	
 	while True:
 
-
-		# Getting the temperature and humidity for both DHTs
-		top_humidity, top_temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, top_pin)
-		bottom_humidity, bottom_temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, bottom_pin)
-		outside_humidity, outside_temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, outside_pin)
-
+		
 		""" 
 		  If temperature goes above 39 degrees, put off light and put on the fan. 
 		  Open the vent
 		  If temperature is getting below 27 degrees, put off fan and put on light. 
 		  Close the vent 
 		"""
-
-		checkLimit(top_temperature, top_humidity, "top")
+		data = readData()
+		checkLimit(data["top_temperature"], data["top_humidity"], "top")
 
 
 		# Top sensor readings
-		mylcd.lcd_display_string("T-Hum:" + str(top_humidity) + "%", 1)
-		mylcd.lcd_display_string("T-Temp:" + str(top_temperature) + "C", 2)
+		mylcd.lcd_display_string("T-Hum:" + str(data["top_humidity"]) + "%", 1)
+		mylcd.lcd_display_string("T-Temp:" + str(data["top_temperature"]) + "C", 2)
 		# Wait for some time
 		sleep(7) # Wait for 7 seconds
 
 		mylcd.lcd_clear() # Clear screen
-		sleep(1) # Wait for 1 second
+		data = readData()
+		checkLimit(data["top_temperature"], data["top_humidity"], "top")
+		#sleep(1) # Wait for 1 second
 
 		# Bottom sensor readings
-		mylcd.lcd_display_string("B-Hum:" + str(bottom_humidity) + "%", 1)
-		mylcd.lcd_display_string("B-Temp:" + str(bottom_temperature) + "C", 2)
+		mylcd.lcd_display_string("B-Hum:" + str(data["bottom_humidity"]) + "%", 1)
+		mylcd.lcd_display_string("B-Temp:" + str(data["bottom_temperature"]) + "C", 2)
 
 		sleep(7) # Wait for 7 seconds
 
 		mylcd.lcd_clear() # Clear screen
-		sleep(1) # Wait for 1 second
+		data = readData()
+		checkLimit(data["top_temperature"], data["top_humidity"], "top")
+		#sleep(1) # Wait for 1 second
 
 		# Outside sensor readings
-		mylcd.lcd_display_string("O-Hum:" + str(outside_humidity) + "%", 1)
-		mylcd.lcd_display_string("O-Temp:" + str(outside_temperature) + "C", 2)
+		mylcd.lcd_display_string("O-Hum:" + str(data["outside_humidity"]) + "%", 1)
+		mylcd.lcd_display_string("O-Temp:" + str(data["outside_temperature"]) + "C", 2)
 
 		sleep(7) # Wait for 7 seconds
 
