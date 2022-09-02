@@ -61,7 +61,7 @@ def readData():
 # Function to check temperature and humidity limits of the sensor
 def checkLimit(temp, humid, position):
 	if position == "top":
-		if temp >= 39:
+		if temp >= 32: # 39
 			print ("Turning off the top light...")
 			GPIO.output(top_light, OFF)
 			print ("Turning on top motor")
@@ -98,7 +98,8 @@ def checkLimit(temp, humid, position):
 # Main loop of the code
 
 try:
-	
+	data = readData()
+	checkLimit(data["top_temperature"], data["top_humidity"], "top")
 	while True:
 
 		
@@ -108,40 +109,43 @@ try:
 		  If temperature is getting below 27 degrees, put off fan and put on light. 
 		  Close the vent 
 		"""
-		data = readData()
-		checkLimit(data["top_temperature"], data["top_humidity"], "top")
+		#data = readData()
+		#checkLimit(data["top_temperature"], data["top_humidity"], "top")
 
 
 		# Top sensor readings
 		mylcd.lcd_display_string("T-Hum:" + str(data["top_humidity"]) + "%", 1)
 		mylcd.lcd_display_string("T-Temp:" + str(data["top_temperature"]) + "C", 2)
-		# Wait for some time
-		sleep(7) # Wait for 7 seconds
-
-		mylcd.lcd_clear() # Clear screen
+		
 		data = readData()
 		checkLimit(data["top_temperature"], data["top_humidity"], "top")
-		#sleep(1) # Wait for 1 second
+		# Wait for some time
+		sleep(3) # Wait for 7 seconds
+
+		mylcd.lcd_clear() # Clear screen
+		sleep(1) # Wait for 1 second
 
 		# Bottom sensor readings
 		mylcd.lcd_display_string("B-Hum:" + str(data["bottom_humidity"]) + "%", 1)
 		mylcd.lcd_display_string("B-Temp:" + str(data["bottom_temperature"]) + "C", 2)
 
-		sleep(7) # Wait for 7 seconds
-
-		mylcd.lcd_clear() # Clear screen
 		data = readData()
 		checkLimit(data["top_temperature"], data["top_humidity"], "top")
-		#sleep(1) # Wait for 1 second
+		sleep(3) # Wait for 7 seconds
+
+		mylcd.lcd_clear() # Clear screen
+		sleep(1) # Wait for 1 second
 
 		# Outside sensor readings
 		mylcd.lcd_display_string("O-Hum:" + str(data["outside_humidity"]) + "%", 1)
 		mylcd.lcd_display_string("O-Temp:" + str(data["outside_temperature"]) + "C", 2)
 
-		sleep(7) # Wait for 7 seconds
+		data = readData()
+		checkLimit(data["top_temperature"], data["top_humidity"], "top")
+		sleep(3) # Wait for 7 seconds
 
 		mylcd.lcd_clear() # Clear screen
-		sleep(1) # Wait for1 second
+		sleep(1) # Wait for 1 second
 
 
 except KeyboardInterrupt:
