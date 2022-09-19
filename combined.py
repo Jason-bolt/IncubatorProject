@@ -33,11 +33,21 @@ GPIO.setmode(GPIO.BCM)
 top_fan = 18
 top_light = 23
 
+bottom_fan = 24
+bottom_light = 25
+
 GPIO.setup(top_fan, GPIO.OUT)
 GPIO.setup(top_light, GPIO.OUT)
 
+GPIO.setup(bottom_fan, GPIO.OUT)
+GPIO.setup(bottom_light, GPIO.OUT)
+
+
 GPIO.output(top_light, OFF)
 GPIO.output(top_fan, OFF)
+
+GPIO.output(bottom_light, OFF)
+GPIO.output(bottom_fan, OFF)
 
 
 
@@ -74,20 +84,20 @@ def checkLimit(temp, humid, position):
 		else:
 			GPIO.output(top_light, ON)
 			GPIO.output(top_fan, OFF)
-#	else:
-#		if temp >= 39:
-#			print ("Turning off the top light...")
-#			GPIO.output(top_light, OFF)
-#			print ("Turning on top motor")
-#			GPIO.output(top_fan, ON)
-#		elif temp <= 27:
-#			print ("Turning on top light...")
-#			GPIO.output(top_light, ON) 
-#			print ("Turning off top motor...")
-#			GPIO.output(top_fan, OFF)
-#		else:
-#			GPIO.output(top_light, ON)
-#			GPIO.output(top_fan, OFF)
+	else:
+		if temp >= 32:
+			print ("Turning off the bottom light...")
+			GPIO.output(bottom_light, OFF)
+			print ("Turning on top motor")
+			GPIO.output(bottom_fan, ON)
+		elif temp <= 27:
+			print ("Turning on bottom light...")
+			GPIO.output(bottom_light, ON) 
+			print ("Turning off bottom motor...")
+			GPIO.output(bottom_fan, OFF)
+		else:
+			GPIO.output(bottom_light, ON)
+			GPIO.output(bottom_fan, OFF)
 
 
 
@@ -100,6 +110,7 @@ def checkLimit(temp, humid, position):
 try:
 	data = readData()
 	checkLimit(data["top_temperature"], data["top_humidity"], "top")
+	checkLimit(data["bottom_temperature"], data["bottom_humidity"], "bottom")
 	while True:
 
 		
@@ -119,6 +130,7 @@ try:
 		
 		data = readData()
 		checkLimit(data["top_temperature"], data["top_humidity"], "top")
+		checkLimit(data["bottom_temperature"], data["bottom_humidity"], "bottom")
 		# Wait for some time
 		sleep(3) # Wait for 7 seconds
 
@@ -131,6 +143,7 @@ try:
 
 		data = readData()
 		checkLimit(data["top_temperature"], data["top_humidity"], "top")
+		checkLimit(data["bottom_temperature"], data["bottom_humidity"], "bottom")
 		sleep(3) # Wait for 7 seconds
 
 		mylcd.lcd_clear() # Clear screen
@@ -142,6 +155,7 @@ try:
 
 		data = readData()
 		checkLimit(data["top_temperature"], data["top_humidity"], "top")
+		checkLimit(data["bottom_temperature"], data["bottom_humidity"], "bottom")
 		sleep(3) # Wait for 7 seconds
 
 		mylcd.lcd_clear() # Clear screen
