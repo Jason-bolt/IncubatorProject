@@ -1,3 +1,11 @@
+# Adafruit Libraries and constants
+ADAFRUIT_IO_USERNAME = "Boltz"
+ADAFRUIT_IO_KEY = "aio_FptZ83idYiNEfybcXPAtUzYQTpTD"
+
+from Adafruit_IO import Client
+aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
+
+
 # Requires RPi_I2C_driver.py
 import RPi_I2C_driver
 from time import *
@@ -49,6 +57,15 @@ GPIO.output(top_fan, OFF)
 GPIO.output(bottom_light, OFF)
 GPIO.output(bottom_fan, OFF)
 
+
+
+# Feeds
+topTempFeed = aio.feeds('incubator.top-temperature')
+topHumFeed = aio.feeds('incubator.top-humidity')
+bottomTempFeed = aio.feeds('incubator.bottom-temperature')
+bottomHumFeed = aio.feeds('incubator.bottom-humidity')
+outTempFeed = aio.feeds('incubator.outside-temperature')
+outHumFeed = aio.feeds('incubator.outside-humidity')
 
 
 # Read sensor values
@@ -127,6 +144,14 @@ try:
 		# Top sensor readings
 		mylcd.lcd_display_string("T-Hum:" + str(data["top_humidity"]) + "%", 1)
 		mylcd.lcd_display_string("T-Temp:" + str(data["top_temperature"]) + "C", 2)
+		
+		# Sending the data to Adafruit.io
+		aio.send_data(topTempFeed.key, str(data["top_temperature"]))
+		aio.send_data(topHumFeed.key, str(data["top_humidity"]))
+		aio.send_data(bottomTempFeed.key, str(data["bottom_temperature"]))
+		aio.send_data(bottomHumFeed.key, str(data["bottom_humidity"]))
+		aio.send_data(outTempFeed.key, str(data["outside_temperature"]))
+		aio.send_data(outHumFeed.key, str(data["outside_humidity"]))
 		
 		data = readData()
 		checkLimit(data["top_temperature"], data["top_humidity"], "top")
