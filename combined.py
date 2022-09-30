@@ -1,6 +1,6 @@
 # Adafruit Libraries and constants
-ADAFRUIT_IO_USERNAME = "Boltz"
-ADAFRUIT_IO_KEY = "aio_FptZ83idYiNEfybcXPAtUzYQTpTD"
+ADAFRUIT_IO_USERNAME = "Rosamond"
+ADAFRUIT_IO_KEY = "aio_zTmj72s1yrqc3SzzRuUbkcRPav0d"
 
 from Adafruit_IO import Client
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
@@ -30,8 +30,8 @@ bottom_pin = 27
 outside_pin = 22
 
 # Servo pins
-top_vent = Servo(12)
-bottom_vent = Servo(5)
+# top_vent = Servo(12)
+# bottom_vent = Servo(5)
 
 # Getting the temperature and humidity for both DHTs
 #top_humidity, top_temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT11, top_pin)
@@ -48,12 +48,13 @@ OPEN = 1
 
 # Defining relay pins
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 top_fan = 18
-top_light = 23
+top_light = 8
 
 bottom_fan = 24
-bottom_light = 25
+bottom_light = 23
 
 GPIO.setup(top_fan, GPIO.OUT)
 GPIO.setup(top_light, GPIO.OUT)
@@ -98,56 +99,64 @@ def readData():
 
 # Function to check temperature and humidity limits of the sensor
 def checkLimit(temp, humid, position):
-	if position == "top":
-		if temp >= 32: # 39
-			print ("Turning off the top light...")
-			GPIO.output(top_light, OFF)
-			print ("Turning on top motor")
-			GPIO.output(top_fan, ON)
-			print ("Opening top vent!")
-			top_vent.value = OPEN
-			sleep(0.5)
-			top_vent.value = None
-		elif temp <= 27:
-			print ("Turning on top light...")
-			GPIO.output(top_light, ON) 
-			print ("Turning off top motor...")
-			GPIO.output(top_fan, OFF)
-			print ("Closing top vent!")
-			top_vent.value = Close
-			sleep(0.5)
-			top_vent.value = None
-		else:
-			GPIO.output(top_light, ON)
-			GPIO.output(top_fan, OFF)
-	else:
-		if temp >= 32:
-			print ("Turning off the bottom light...")
-			GPIO.output(bottom_light, OFF)
-			print ("Turning on top motor")
-			GPIO.output(bottom_fan, ON)
-			print ("Opening bottom vent!")
-			bottom_vent.value = OPEN
-			sleep(0.5)
-			bottom_vent.value = None
-		elif temp <= 27:
-			print ("Turning on bottom light...")
-			GPIO.output(bottom_light, ON) 
-			print ("Turning off bottom motor...")
-			GPIO.output(bottom_fan, OFF)
-			print ("Closing bottom vent!")
-			bottom_vent.value = CLOSE
-			sleep(0.5)
-			bottom_vent.value = None
-		else:
-			GPIO.output(bottom_light, ON)
-			GPIO.output(bottom_fan, OFF)
+    if position == "top":
+        if type(temp) is not None:
+            if int(temp) >= 35: # 39
+                print ("Turning off the top light...")
+                GPIO.output(top_light, OFF)
+                print ("Turning on top motor")
+                GPIO.output(top_fan, ON)
+                print ("Opening top vent!")
+    # 			top_vent = GPIO.PWM(12, 50)
+    # 			top_vent.start(60)
+    # 			sleep(1)
+    # 			top_vent.ChangeDutyCycle(120)
+    # 			sleep(1)
+    # 			top_vent.stop()
+    # 			top_vent.value = OPEN
+    # 			sleep(0.5)
+    # 			top_vent.value = None
+            elif int(temp) <= 27:
+                print ("Turning on top light...")
+                GPIO.output(top_light, ON) 
+                print ("Turning off top motor...")
+                GPIO.output(top_fan, OFF)
+                print ("Closing top vent!")
+    # 			top_vent.value = Close
+    # 			sleep(0.5)
+    # 			top_vent.value = None
+            else:
+                GPIO.output(top_light, ON)
+                GPIO.output(top_fan, OFF)
+        else:
+            if int(temp) >= 35:
+                print ("Turning off the bottom light...")
+                GPIO.output(bottom_light, OFF)
+                print ("Turning on top motor")
+                GPIO.output(bottom_fan, ON)
+                print ("Opening bottom vent!")
+    # 			bottom_vent.value = OPEN
+    # 			sleep(0.5)
+    # 			bottom_vent.value = None
+            elif int(temp) <= 27:
+                print ("Turning on bottom light...")
+                GPIO.output(bottom_light, ON) 
+                print ("Turning off bottom motor...")
+                GPIO.output(bottom_fan, OFF)
+                print ("Closing bottom vent!")
+    # 			bottom_vent.value = CLOSE
+    # 			sleep(0.5)
+    # 			bottom_vent.value = None
+            else:
+                GPIO.output(bottom_light, ON)
+                GPIO.output(bottom_fan, OFF)
 
 
 
 
 
-
+GPIO.output(top_light, ON)
+GPIO.output(bottom_light, ON)
 
 # Main loop of the code
 
