@@ -5,12 +5,16 @@
   - [Purpose](#purpose)
   - [Hardware Tools](#hardware-tools)
   - [Software Technologies](#software-technologies)
+  - [Hardware Explanation](#hardware-explanation)
   - [Concept](#concept)
-
+  - [Problems Faced](#problems-faced)
+  - [Fixes To The Problem](#fixes-to-the-problem)
+    - [Solution to the first problem](#solution-to-the-first-problem)
+    - [Posible solution for second problem](#posible-solution-for-second-problem)
 
 ## Image
 
-![Image of system](./image.jpeg)
+<img src='./image.jpeg' width='70%' >
 
 <br />
 
