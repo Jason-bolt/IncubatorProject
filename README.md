@@ -14,7 +14,7 @@
 
 ## Image
 
-<img src='./image.jpeg' width='70%' >
+<img src='./image.jpeg' width='70%' alt='Image of setup' >
 
 <br />
 
@@ -52,6 +52,9 @@ The last compartment holds the water trough which was placed to raise the humidi
 
 ## Concept
 The system is designed to house chicken eggs for incubation. The light bulbs provide heat to the eggs. So as not to overheat a portion of the eggs, the 12V DC motors turn the eggs at regular and pre-determined intervals.
+
+## Fritzing diagram
+<img src='./fritzing.jpg' width='80%' alt='Fritzing Image'>
 
 <br />
 
